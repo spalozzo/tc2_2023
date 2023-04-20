@@ -17,8 +17,9 @@ from pytc2.sistemas_lineales import pzmap, GroupDelay, bodePlot
 
 #Valores desnormalizados
 #R1= 1000; R2=1000; R3=1000; C=1e-6;
+
 #Valores normalizados
-R1= 1000; R2=R1; R3=R1; C=1/R1;
+R1= 1; R2=R1; R3=R1; C=1/R1;
 
 #w0 = 1/(R3*C)
 w0 = 1
