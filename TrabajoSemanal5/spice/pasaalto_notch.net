@@ -1,0 +1,22 @@
+* C:\Users\santi\OneDrive - UTN.BA\UTN\4. Cuarto Año\Teoría de los Circuitos II\GitHub\tc2_2023\TrabajoSemanal5\spice\pasaalto_notch.asc
+C0 N003 N004 {C1}
+R0 N003 0 {R}
+C1 N001 N005 {C2}
+R1 N001 0 {R01}
+R5 N007 N005 {R}
+R2 N006 N001 {R}
+R3 N002 N006 {R}
+R4 Vo N002 {R}
+C2 N007 Vo {C2}
+XU1 N002 N007 N006 opamp Aol=100K GBW=10Meg
+XU2 N002 N001 Vo opamp Aol=100K GBW=10Meg
+V1 N004 0 AC 1 0
+XU3 N005 N003 N005 opamp Aol=100K GBW=10Meg
+.lib opamp.sub
+.ac dec 10000 0.01 10k
+.param R={1} w0={2*pi*300} Q={9/8}
+.param C1= {1/w0/R}
+.param R01={Q*R} C2={1/w0/R}
+* Para la segunda sección, tengo R1, R2 y R como grados de\nlibertad. Elijo R=R2=norma de impedancia
+.backanno
+.end

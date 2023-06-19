@@ -1,0 +1,24 @@
+Circuit: * C:\Users\santi\OneDrive - UTN.BA\UTN\4. Cuarto Año\Teoría de los Circuitos II\GitHub\tc2_2023\TrabajoSemanal5\spice\pasaalto_notch.asc
+
+Ignoring empty pin current: Ix(u1:1)
+Ignoring empty pin current: Ix(u1:2)
+Ignoring empty pin current: Ix(u2:1)
+Ignoring empty pin current: Ix(u2:2)
+Ignoring empty pin current: Ix(u3:1)
+Ignoring empty pin current: Ix(u3:2)
+
+Date: Mon Jun 19 12:59:29 2023
+Total elapsed time: 0.477 seconds.
+
+tnom = 27
+temp = 27
+method = trap
+totiter = 0
+traniter = 0
+tranpoints = 0
+accept = 0
+rejected = 0
+matrix size = 9
+fillins = 10
+solver = Normal
+
