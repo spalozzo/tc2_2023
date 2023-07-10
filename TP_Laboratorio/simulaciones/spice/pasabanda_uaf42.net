@@ -1,0 +1,23 @@
+* C:\Users\santi\OneDrive - UTN.BA\UTN\4. Cuarto Año\Teoría de los Circuitos II\GitHub\tc2_2023\TP_Laboratorio\simulaciones\spice\pasabanda_uaf42.asc
+XU2 N004 N007 N001 opamp Aol=100K GBW=10Meg
+XU3 N002 0 Vo opamp Aol=100K GBW=10Meg
+XU4 N006 0 N005 opamp Aol=100K GBW=10Meg
+RG Vi N007 50k
+R4 Vo N007 50k
+R2 N001 N004 50k
+R1 N005 N004 50k
+C1 Vo N002 1000pF
+C2 N005 N006 1000pf
+Rf1 N002 N001 10k
+Rf2_1 N003 Vo 68k
+V1 Vi 0 AC 1 0
+Rq_1 N007 N008 220
+Rq_2 N008 0 3.9k
+Rf2_2 N003 N006 2.2k
+.lib opamp.sub
+.ac dec 10000 10 1Meg
+* Circuito interno UAF42
+* Filtro Pasabanda con UAF42
+* TP de Laboratorio N°1 - TC2 2023
+.backanno
+.end
