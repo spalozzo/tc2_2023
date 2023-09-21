@@ -38,22 +38,31 @@ def mod_phase_h(h):
 def plotFreqLine(f, color='black'):
     plt.axvline(f, color=color, linestyle='--') # cutoff frequency
 
-def bodePlotDigitalBP(digital_sos, fpass, fstop, freq, fs, numfig):
+def bodePlotDigitalBP(system, fpass, fstop, freq, fs, xlim=False, ylim=False, numfig=None, sos=True):
     
-    wd,hd= sig.sosfreqz(digital_sos, worN=freq, fs=fs)
-    
+    if(sos):
+        wd,hd= sig.sosfreqz(system, worN=freq, fs=fs)
+        wdelay, gdelay= sig.group_delay(sig.sos2tf(system),fs=fs)
+    else:
+        wd,hd= sig.freqz(system[0], system[1], worN=freq, fs=fs)
+        wdelay, gdelay= sig.group_delay(system, w=freq ,fs=fs)
+            
     
     fig_bode= plt.figure(numfig)
-    ax_mod, ax_phase= fig_bode.subplots(2, 1, sharex=True)
+    ax_mod, ax_phase, ax_delay= fig_bode.subplots(3, 1, sharex=True)
 
     mod_d, phase_d= mod_phase_h(hd)   
+    
+    mod_d[0]= 0.00001
 
     # MODULE
     fig_bode.sca(ax_mod)
-    ax_mod.plot(wd,20*np.log10(mod_d), label='Butter Digital N=2')
+    ax_mod.plot(wd,20*np.log10(mod_d), label='FIR')
     ax_mod.set(xscale='log')
     plt.legend()
     plt.grid(True, which='both', axis='both')
+    plt.xlim(fstop[0]/2, fstop[1]*3/2)
+    plt.ylim(-60, 10)
     plt.ylabel('Magnitude [dB]')
     plt.title('Magnitude response')
     
@@ -65,17 +74,40 @@ def bodePlotDigitalBP(digital_sos, fpass, fstop, freq, fs, numfig):
     
     # PHASE
     fig_bode.sca(ax_phase)
-    ax_phase.plot(wd,phase_d, label='Butter Digital N=2')
+    ax_phase.plot(wd,phase_d, label='FIR')
     ax_phase.set(xscale='log')
     plt.legend()
     plt.grid(True, which='both', axis='both')
-    plt.xlabel('Angular frequency [rad/sec]')
+    #plt.xlabel('Angular frequency [rad/sec]')
     plt.ylabel('Phase [rad]')
     plt.title('Phase response')
+    
+    # GROUP DELAY
+    fig_bode.sca(ax_delay)
+    ax_delay.plot(wdelay,gdelay, label='FIR')
+    ax_delay.set(xscale='log')
+    plt.legend()
+    plt.grid(True, which='both', axis='both')
+    # plt.xlabel('Angular frequency [rad/sec]')
+    plt.ylabel('Group Delay [samples]')
+    plt.title('Group Delay') 
     
     plt.show()
     
     return 0;
+
+def plotImpulseResponse(response):
+    
+    plt.figure()
+    plt.plot(response, label='IIR')
+    plt.xscale('log')
+    plt.legend()
+    plt.grid(True, which='both', axis='both')
+    plt.xlabel('Angular frequency [rad/sec]')
+    plt.ylabel('Impulse Response')
+    plt.title('Impulse Response')
+    
+    return
 
 def plot_fir_plantilla(frecs,ripple,attenuation,fs):
     plt.title('Filtros diseñados')
@@ -130,7 +162,8 @@ gains = 10**(gains/20)
 wp_array= np.array([wp1, wp2])
 ws_array= np.array([ws1, ws2])
 
-freq_ax= np.linspace(0, 1, 100000)
+# freq_ax= np.linspace(0, 1, 100000)
+freq_ax= 10000
 
 # bp_sos = sig.iirdesign(wp_array, ws_array, ripple, atenuacion,ftype='butter', output='sos', fs=fs)
 
@@ -194,6 +227,15 @@ w_fir_bp2, h_fir_bp2= sig.freqz(num_bp_fir2, den_bp_fir2, freq_ax)
 plt.figure(4)
 plt.plot(w_fir_bp2/np.pi * nyq_frec, 20 * np.log10(abs(h_fir_bp2)), label='FIR-Win {:d}'.format(num_bp_fir2.shape[0]))
 plot_fir_plantilla(frecs,ripple,atenuacion,fs)
+
+
+bodePlotDigitalBP([num_bp_fir2,den_bp_fir2], wp_array, ws_array, freq_ax, fs, sos=False)
+
+impulse= sig.unit_impulse(freq_ax)
+impulse_response= sig.lfilter(num_bp_fir2, den_bp_fir2, impulse)
+plotImpulseResponse(impulse_response)
+
+
 
 
 

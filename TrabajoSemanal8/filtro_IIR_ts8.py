@@ -38,22 +38,28 @@ def mod_phase_h(h):
 def plotFreqLine(f, color='black'):
     plt.axvline(f, color=color, linestyle='--') # cutoff frequency
 
-def bodePlotDigitalBP(digital_sos, fpass, fstop, freq, fs, numfig):
+def bodePlotDigitalBP(digital_sos, fpass, fstop, freq, fs, xlim=False, ylim=False, numfig=1):
     
     wd,hd= sig.sosfreqz(digital_sos, worN=freq, fs=fs)
-    
+    wdelay, gdelay= sig.group_delay(sig.sos2tf(digital_sos),fs=fs)
     
     fig_bode= plt.figure(numfig)
-    ax_mod, ax_phase= fig_bode.subplots(2, 1, sharex=True)
+    ax_mod, ax_phase, ax_delay= fig_bode.subplots(3, 1, sharex=True)
 
     mod_d, phase_d= mod_phase_h(hd)   
+    
+    mod_d[0]= 0.00001
 
     # MODULE
     fig_bode.sca(ax_mod)
-    ax_mod.plot(wd,20*np.log10(mod_d), label='Butter Digital N=2')
+    ax_mod.plot(wd,20*np.log10(mod_d), label='IIR')
     ax_mod.set(xscale='log')
     plt.legend()
     plt.grid(True, which='both', axis='both')
+    if(xlim):
+        plt.xlim(xlim[0], xlim[1])
+    if(ylim):
+        plt.ylim(ylim[0], ylim[1])
     plt.ylabel('Magnitude [dB]')
     plt.title('Magnitude response')
     
@@ -65,18 +71,40 @@ def bodePlotDigitalBP(digital_sos, fpass, fstop, freq, fs, numfig):
     
     # PHASE
     fig_bode.sca(ax_phase)
-    ax_phase.plot(wd,phase_d, label='Butter Digital N=2')
+    ax_phase.plot(wd,phase_d, label='IIR')
     ax_phase.set(xscale='log')
     plt.legend()
     plt.grid(True, which='both', axis='both')
-    plt.xlabel('Angular frequency [rad/sec]')
+    #plt.xlabel('Angular frequency [rad/sec]')
     plt.ylabel('Phase [rad]')
     plt.title('Phase response')
+    
+    # GROUP DELAY
+    fig_bode.sca(ax_delay)
+    ax_delay.plot(wdelay,gdelay, label='IIR')
+    ax_delay.set(xscale='log')
+    plt.legend()
+    plt.grid(True, which='both', axis='both')
+    # plt.xlabel('Angular frequency [rad/sec]')
+    plt.ylabel('Group Delay [samples]')
+    plt.title('Group Delay') 
     
     plt.show()
     
     return 0;
 
+def plotImpulseResponse(response):
+    
+    plt.figure()
+    plt.plot(response, label='IIR')
+    plt.xscale('log')
+    plt.legend()
+    plt.grid(True, which='both', axis='both')
+    plt.xlabel('Angular frequency [rad/sec]')
+    plt.ylabel('Impulse Response')
+    plt.title('Impulse Response')
+    
+    return
 
 plt.close("all")
 
@@ -94,10 +122,14 @@ ecg_one_lead = mat_struct['ecg_lead']
 ecg_one_lead = ecg_one_lead.flatten()
 cant_muestras = len(ecg_one_lead)
 
+
+
+###############################################################################
+########################## PARTE 1: diseño del filtro #########################
+###############################################################################
+
 fs = 1000 # Hz
 nyq_frec = fs / 2
-
-
 
 # Plantilla
 
@@ -118,7 +150,8 @@ gains = 10**(gains/20)
 ### Diseño Filtro Digital
 wp_array= np.array([wp1, wp2])
 ws_array= np.array([ws1, ws2])
-freq_ax= np.linspace(0, nyq_frec, 100000)
+# freq_ax= np.linspace(0, nyq_frec, 100000)
+freq_ax=10000
 
 bp_sos = sig.iirdesign(wp_array, ws_array, ripple, atenuacion,ftype='butter', output='sos', fs=fs)
 # bp_sos = sig.iirdesign(wp_array, ws_array, ripple, atenuacion,ftype='ellip', output='sos', fs=fs)
@@ -133,8 +166,16 @@ bp_sos = sig.iirdesign(wp_array, ws_array, ripple, atenuacion,ftype='butter', ou
 ####################################################################################################
 
 #Si le paso como argumento fs, no necesito normalizar por nyquist en las frec de paso y corte
-bodePlotDigitalBP(bp_sos, wp_array, ws_array, freq_ax, fs, 1)
+bodePlotDigitalBP(bp_sos, wp_array, ws_array, freq_ax, fs, xlim=[ws1/2, ws2*3/2], ylim=[-200, 10])
 
+impulse= sig.unit_impulse(freq_ax)
+impulse_response= sig.sosfilt(bp_sos, impulse)
+plotImpulseResponse(impulse_response)
+
+###############################################################################
+########################## PARTE 2: prueba del filtro #########################
+###############################################################################
+#
 # IIR
 ECG_f_butt = sig.sosfilt(bp_sos, ecg_one_lead)
 
