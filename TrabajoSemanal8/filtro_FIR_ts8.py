@@ -235,7 +235,79 @@ impulse= sig.unit_impulse(freq_ax)
 impulse_response= sig.lfilter(num_bp_fir2, den_bp_fir2, impulse)
 plotImpulseResponse(impulse_response)
 
+#### PARTE 2 - FILTRADO DE SEÑAL ####
+## Señal de ECG registrada a 1 kHz, con contaminación de diversos orígenes.
+plt.close("all")
+# para listar las variables que hay en el archivo
+#io.whosmat('ecg.mat')
 
+mat_struct = sio.loadmat('ecg.mat')
+
+ecg_one_lead = mat_struct['ecg_lead']
+ecg_one_lead = ecg_one_lead.flatten()
+cant_muestras = len(ecg_one_lead)
+
+# FIR
+ECG_f_win = sig.lfilter(num_bp_fir2, den_bp_fir2, ecg_one_lead)
+
+# demora = int(...)
+# calcule la demora para cada caso, dicha demora adelantará la señal de salida, como puede ver más abajo.
+demora = 420 #750
+
+         
+# Segmentos de interés con ALTA contaminación
+
+regs_interes = ( 
+        np.array([5, 5.2]) *60*fs, # minutos a muestras
+        np.array([12, 12.4]) *60*fs, # minutos a muestras
+        np.array([15, 15.2]) *60*fs, # minutos a muestras
+        )
+
+for ii in regs_interes:
+    
+    # intervalo limitado de 0 a cant_muestras
+    zoom_region = np.arange(np.max([0, ii[0]]), np.min([cant_muestras, ii[1]]), dtype='uint')
+    
+    plt.figure(figsize=(fig_sz_x, fig_sz_y), dpi= fig_dpi, facecolor='w', edgecolor='k')
+    plt.plot(zoom_region, ecg_one_lead[zoom_region], label='ECG original', linewidth=2)
+    #plt.plot(zoom_region, ECG_f_win[zoom_region], label='Butter')
+    plt.plot(zoom_region, ECG_f_win[zoom_region + demora], label='ECG filtrado')
+    
+    plt.title('ECG filtering example from ' + str(ii[0]) + ' to ' + str(ii[1]) )
+    plt.ylabel('Adimensional')
+    plt.xlabel('Muestras (#)')
+    
+    axes_hdl = plt.gca()
+    axes_hdl.legend()
+    axes_hdl.set_yticks(())
+            
+    plt.show()
+
+
+regs_interes = ( 
+        [4000, 5500], # muestras
+        [10e3, 11e3], # muestras
+        )
+
+for ii in regs_interes:
+    
+    # intervalo limitado de 0 a cant_muestras
+    zoom_region = np.arange(np.max([0, ii[0]]), np.min([cant_muestras, ii[1]]), dtype='uint')
+    
+    plt.figure(figsize=(fig_sz_x, fig_sz_y), dpi= fig_dpi, facecolor='w', edgecolor='k')
+    plt.plot(zoom_region, ecg_one_lead[zoom_region], label='ECG', linewidth=2)
+    #plt.plot(zoom_region, ECG_f_butt[zoom_region], label='Butter')
+    plt.plot(zoom_region, ECG_f_win[zoom_region + demora], label='Win')
+    
+    plt.title('ECG filtering example from ' + str(ii[0]) + ' to ' + str(ii[1]) )
+    plt.ylabel('Adimensional')
+    plt.xlabel('Muestras (#)')
+    
+    axes_hdl = plt.gca()
+    axes_hdl.legend()
+    axes_hdl.set_yticks(())
+            
+    plt.show()
 
 
 
