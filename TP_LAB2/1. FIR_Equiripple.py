@@ -48,7 +48,7 @@ fs = 44100.0 # Hz
 nyq_frec = fs / 2
 
 # Filter Design
-ripple = 1 # dB
+ripple = 0.1 # dB
 atenuacion = 20 # dB
 
 wp1 = 1000 #Hz
@@ -66,7 +66,7 @@ gains = 10**(gains/20)
 
 freq_ax= 10000
 
-numtaps= 151
+numtaps= 201
 # Diseño filtro Band Reject
 fir_equiripple= sig.remez(numtaps, frecs, gains[[1,2]], fs=fs) #No especifico fs porque ya paso las f normalizadas
 den_br_fir= [1]

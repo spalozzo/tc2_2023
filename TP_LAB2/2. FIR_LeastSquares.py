@@ -130,7 +130,7 @@ fs = 44100.0 # Hz
 nyq_frec = fs / 2
 
 # Filter Design
-ripple = 1 # dB
+ripple = 0.1 # dB
 atenuacion = 20 # dB
 
 wp1 = 2000 #Hz
