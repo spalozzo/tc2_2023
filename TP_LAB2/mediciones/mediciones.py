@@ -70,6 +70,15 @@ def bodePlot4Filters(modulo, my_label):
     filters[0,0].set(xscale='log')
     filters[0,0].legend()
     filters[0,0].grid()
+    filters[0,0].xaxis.set_tick_params(labelbottom=False)
+    # i=-1
+    # for item in modulo[0][:,1]:
+    #     i += 1
+    #     if item < -3:
+    #         plt.axvline((modulo[0][i][0]), color='red', linestyle='--')   # stop   frequency
+    #         break
+    plt.axvline(7590, color='red', linestyle='--')   # stop   frequency
+    
     plt.ylabel('Magnitude [dB]')
     plt.title('Caracteristica del Sistema')
 
@@ -79,7 +88,11 @@ def bodePlot4Filters(modulo, my_label):
     filters[0,1].set(xscale='log')
     filters[0,1].legend()
     filters[0,1].grid()
-    plt.ylabel('Magnitude [dB]')
+    filters[0,1].xaxis.set_tick_params(labelbottom=False)
+    # filters[0,1].yaxis.set_tick_params(labelleft=False)
+    plt.axvline(1000, color='green', linestyle='--') # cutoff frequency
+    plt.axvline(2000, color='red', linestyle='--')   # stop   frequency
+    # plt.ylabel('Magnitude [dB]')
     plt.title('Pasabajos FIR')
     
     # ## Ploteo el filtro 3
@@ -88,6 +101,10 @@ def bodePlot4Filters(modulo, my_label):
     filters[1,0].set(xscale='log')
     filters[1,0].legend()
     filters[1,0].grid()
+    plt.axvline(2000, color='green', linestyle='--') # cutoff frequency
+    plt.axvline(4000, color='red', linestyle='--')   # stop   frequency
+    plt.axvline(6000, color='red', linestyle='--') # stop   frequency
+    plt.axvline(8000, color='green', linestyle='--') # cutoff frequency
     plt.ylabel('Magnitude [dB]')
     plt.xlabel('Angular frequency [rad/sec]')
     plt.title('Elimina Banda FIR')
@@ -98,12 +115,15 @@ def bodePlot4Filters(modulo, my_label):
     filters[1,1].set(xscale='log')
     filters[1,1].legend()
     filters[1,1].grid()
-    plt.ylabel('Magnitude [dB]')
+    # filters[1,1].yaxis.set_tick_params(labelleft=False)
+    plt.axvline(2000, color='green', linestyle='--') # cutoff frequency
+    plt.axvline(3000, color='red', linestyle='--')   # stop   frequency
+    # plt.ylabel('Magnitude [dB]')
     plt.xlabel('Angular frequency [rad/sec]')
     plt.title('Pasabajos IIR')
     
-    for ax in filters.flat:
-        ax.label_outer()
+    # for ax in filters.flat:
+    #     ax.label_outer()
     
     plt.show()
     
