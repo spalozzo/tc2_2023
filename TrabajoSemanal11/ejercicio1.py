@@ -12,7 +12,7 @@ import numpy as np
 from pytc2.general import print_latex, print_subtitle, a_equal_b_latex_s
 from pytc2.remociones import remover_polo_dc, remover_polo_jw, remover_polo_infinito
 
-from pytc2.dibujar import display, dibujar_puerto_entrada, dibujar_funcion_exc_abajo
+from pytc2.dibujar import display, dibujar_puerto_entrada, dibujar_funcion_exc_abajo, dibujar_puerto_salida
 from pytc2.dibujar import dibujar_elemento_serie, dibujar_elemento_derivacion, Drawing
 from pytc2.dibujar import Inductor, Capacitor, dibujar_tanque_derivacion, dibujar_espacio_derivacion
 
@@ -43,14 +43,11 @@ C3= Y4 / s
 circuito = Drawing(unit=4)
 circuito = dibujar_puerto_entrada(circuito,voltage_lbl = ('V1'), current_lbl = 'I1')
 circuito, zz_lbl = dibujar_funcion_exc_abajo(circuito, 'Y11(s)', Y11, hacia_salida = True, k_gap_width=0.5)
-
 circuito = dibujar_elemento_serie(circuito, Inductor, L1)
 circuito = dibujar_elemento_serie(circuito, Capacitor, C1)
-circuito = dibujar_espacio_derivacion(circuito)
 circuito = dibujar_tanque_derivacion(circuito, L2, C2)
-circuito = dibujar_espacio_derivacion(circuito)
 circuito = dibujar_elemento_serie(circuito, Capacitor, C3)
-
+circuito = dibujar_puerto_salida(circuito,voltage_lbl = ('V2'), current_lbl = 'I2')
 
 display(circuito)  
 

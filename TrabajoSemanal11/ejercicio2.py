@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from pytc2.general import print_latex, print_subtitle, a_equal_b_latex_s
-from pytc2.remociones import remover_valor, remover_polo_sigma, remover_polo_infinito
+from pytc2.remociones import remover_valor, remover_polo_sigma, remover_polo_infinito,remover_valor_en_infinito, remover_valor_en_dc
 
 from pytc2.dibujar import display, dibujar_puerto_entrada, dibujar_puerto_salida, dibujar_funcion_exc_abajo
 from pytc2.dibujar import dibujar_elemento_serie, dibujar_elemento_derivacion, Drawing
@@ -54,31 +54,29 @@ display(circuito)
 # Sintesis mediante impedancia Z11
 
 # Sea la siguiente función excitacion
-Z11 = (s + 2)*(s + 4)/s/(s + 3)
+Z11 = (s + 2)*(s + 4)/(s + 1)/(s + 3)
 
 
-# Remociones   
-Y4, kC2 = remover_polo_infinito(Y22) # Remocion en infinito - C en paralelo
-C2 = kC2 / s
+# Remociones
+Z2, R1 = remover_valor_en_infinito(Z11)
+Z4, Z3, R2, C2= remover_polo_sigma(Z2, 1)
+   
+Y4 = 1/Z4
 
-Y6, G2 = remover_valor(Y4, sigma_zero = 1) # Remocion parcial - R en paralelo
+Y6, G3= remover_valor_en_dc(Y4)
 
-R0, ZRC, R1, C1 = remover_polo_sigma(1/Y6, 1, isImpedance = True)  # Remocion finita - RC en serie
-
-# R0 es el residuo final, una R en serie
+C3 = Y6 / s
 
 
 circuito = Drawing(unit=4)
 circuito = dibujar_puerto_entrada(circuito,voltage_lbl = ('V1'), current_lbl = 'I1')
-
-circuito = dibujar_elemento_serie(circuito, Resistor, R0)
-circuito = dibujar_tanque_RC_serie(circuito, R1, C1)
-circuito = dibujar_elemento_derivacion(circuito, Resistor, 1/G2)
+circuito, zz_lbl = dibujar_funcion_exc_abajo(circuito, 'Z11(s)', Z11, hacia_salida = True, k_gap_width=0.5)
+circuito = dibujar_elemento_serie(circuito, Resistor, R1)
+circuito = dibujar_tanque_RC_serie(circuito, R2, C2)
+circuito = dibujar_elemento_derivacion(circuito, Resistor, 1/G3)
 circuito = dibujar_espacio_derivacion(circuito)
 circuito = dibujar_espacio_derivacion(circuito)
-circuito = dibujar_elemento_derivacion(circuito, Capacitor, C2)
-
-circuito, zz_lbl = dibujar_funcion_exc_abajo(circuito, 'Y22(s)', Y22, hacia_entrada = True, k_gap_width=0.5)
+circuito = dibujar_elemento_derivacion(circuito, Capacitor, C3)
 circuito = dibujar_puerto_salida(circuito,voltage_lbl = ('V2'), current_lbl = 'I2')
 display(circuito)
 
