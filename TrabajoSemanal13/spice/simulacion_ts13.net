@@ -1,0 +1,19 @@
+* C:\Users\santi\OneDrive - UTN.BA\UTN\4. Cuarto Año\Teoría de los Circuitos II\GitHub\tc2_2023\TrabajoSemanal13\simulacion_ts13.asc
+V1 V1 0 AC 1 0
+R1 N001 V1 {Rg}
+L1 N002 N001 {L1}
+L2 V2 N002 {L2}
+R2 V2 0 {RL}
+C1 N002 0 {C}
+.param Rg={norma_z} RL= {norma_z}
+.param L1={1.254*norma_z/norma_w}
+.param L2={0.1926*norma_z/norma_w}
+.param C={0.55/norma_z/norma_w}
+* .param norma_z={1} norma_w={1}\n.ac dec 10000 0.01 20
+* Simulacion Normalizada
+* Simulacion Desnormalizada
+.param norma_z={50} norma_w={2.387e6}
+.ac dec 10000 1k 100Meg
+.net I(R1) V1
+.backanno
+.end
