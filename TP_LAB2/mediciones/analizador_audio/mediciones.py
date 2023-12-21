@@ -47,7 +47,7 @@ def bodePlot4Filters(modulo, my_label):
     modulo : vector de 2 columnas con los 4 filtros
         Primera columna eje frecuencial, segunda ganancia en [dB]
     my_label : string
-        Array con as leyendas del grafico
+        Array con las leyendas del grafico
 
     Returns
     -------
@@ -62,7 +62,7 @@ def bodePlot4Filters(modulo, my_label):
     
 
     bode_plots.suptitle('Diagramas de Bode para los Filtros Ensayados')
-
+    bode_plots.tight_layout()
     
     ## Ploteo el filtro 1
     plt.sca(filters[0,0])
@@ -70,7 +70,7 @@ def bodePlot4Filters(modulo, my_label):
     filters[0,0].set(xscale='log')
     filters[0,0].legend()
     filters[0,0].grid()
-    filters[0,0].xaxis.set_tick_params(labelbottom=False)
+    filters[0,0].xaxis.set_tick_params(labelbottom=True)
     # i=-1
     # for item in modulo[0][:,1]:
     #     i += 1
@@ -88,7 +88,7 @@ def bodePlot4Filters(modulo, my_label):
     filters[0,1].set(xscale='log')
     filters[0,1].legend()
     filters[0,1].grid()
-    filters[0,1].xaxis.set_tick_params(labelbottom=False)
+    filters[0,1].xaxis.set_tick_params(labelbottom=True)
     # filters[0,1].yaxis.set_tick_params(labelleft=False)
     plt.axvline(1000, color='green', linestyle='--') # cutoff frequency
     plt.axvline(2000, color='red', linestyle='--')   # stop   frequency

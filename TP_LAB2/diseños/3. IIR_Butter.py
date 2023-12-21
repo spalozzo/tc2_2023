@@ -113,7 +113,7 @@ w_iir, h_iir= sig.sosfreqz(iir_np, worN=10000, fs=fs)
 
 plt.figure(6)
 
-plt.plot(w_iir, 20*np.log10(abs(h_iir)),label='IIR Butterworth SOS{:d}'.format(i-1))
+plt.plot(w_iir, 20*np.log10(abs(h_iir)),label='IIR Butterworth Resultante')
 plot_fir_plantilla(frecs,ripple,atenuacion,fs)
 
 
